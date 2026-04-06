@@ -133,7 +133,7 @@ if __name__ == "__main__":
         ]
         with open("orders.json", "w", encoding="utf-8") as f:
             json.dump(sample_data, f, indent=2)
-        print("✅ Создан файл orders.json с тестовыми данными\n")
+        print(" Создан файл orders.json с тестовыми данными\n")
     
     print("=" * 50)
     print("1. СТАНДАРТНАЯ РАБОТА (с отправкой email)")
