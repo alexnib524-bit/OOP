@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from typing import List
 
-# ========== 1. Модель данных ==========
+# Модель данных 
 @dataclass
 class Order:
     id: str
@@ -12,18 +12,18 @@ class Order:
     customer_email: str
 
 
-# ========== 2. Загрузка ==========
+# Загрузка 
 class OrderLoader:
-    """Отвечает только за загрузку данных из файла"""
+    
     
     def load(self, json_path: str) -> List[dict]:
         with open(json_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
 
-# ========== 3. Валидация и парсинг ==========
+# Валидация и парсинг 
 class OrderParser:
-    """Отвечает только за валидацию и преобразование в объекты Order"""
+    
     
     def parse(self, raw_data: List[dict]) -> List[Order]:
         orders = []
@@ -47,25 +47,25 @@ class OrderParser:
         )
 
 
-# ========== 4. Расчёт ==========
+#  Расчёт 
 class OrderCalculator:
-    """Отвечает только за расчёты"""
+    
     
     def calculate_total(self, orders: List[Order]) -> float:
         return sum(o.price * o.qty for o in orders)
 
 
-# ========== 5. Форматирование ==========
+# Форматирование 
 class ReportFormatter:
-    """Отвечает только за форматирование отчёта"""
+    
     
     def format(self, orders: List[Order], total: float) -> str:
         return f"Orders count: {len(orders)}\nTotal: {total:.2f}\n"
 
 
-# ========== 6. Отправка (можно отключить/заменить) ==========
+#  Отправка (можно отключить/заменить) 
 class EmailSender(ABC):
-    """Абстрактный класс для отправки"""
+    
     
     @abstractmethod
     def send_report(self, orders: List[Order], report: str) -> None:
@@ -73,7 +73,7 @@ class EmailSender(ABC):
 
 
 class RealEmailSender(EmailSender):
-    """Реальная отправка email"""
+    
     
     def send_report(self, orders: List[Order], report: str) -> None:
         for o in orders:
@@ -84,15 +84,15 @@ class RealEmailSender(EmailSender):
 
 
 class DisabledEmailSender(EmailSender):
-    """Отправка ОТКЛЮЧЕНА (заглушка)"""
+    
     
     def send_report(self, orders: List[Order], report: str) -> None:
-        pass  # Ничего не делаем - отправка отключена
+        pass  
 
 
-# ========== 7. Главный сервис (оркестратор) ==========
+# Главный сервис (оркестратор) 
 class OrderReportService:
-    """Собирает всё вместе и координирует работу"""
+   
     
     def __init__(self, sender: EmailSender = None):
         self.loader = OrderLoader()
@@ -102,27 +102,27 @@ class OrderReportService:
         self.sender = sender if sender else RealEmailSender()
     
     def make_and_send_report(self, json_path: str) -> str:
-        # 1) Загрузка
+        #  Загрузка
         raw_data = self.loader.load(json_path)
         
-        # 2) Валидация + парсинг
+        #  Валидация + парсинг
         orders = self.parser.parse(raw_data)
         
-        # 3) Расчёт
+        #  Расчёт
         total = self.calculator.calculate_total(orders)
         
-        # 4) Форматирование
+        #  Форматирование
         report = self.formatter.format(orders, total)
         
-        # 5) Отправка
+        #  Отправка
         self.sender.send_report(orders, report)
         
         return report
 
 
-# ========== 8. Демонстрация работы ==========
+#  Демонстрация работы 
 if __name__ == "__main__":
-    # Создаём тестовые данные (если нет файла)
+    
     try:
         with open("orders.json", "r", encoding="utf-8") as f:
             pass
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     print("3. НОВЫЙ ФОРМАТ ОТЧЁТА (без правок в расчёте)")
     print("=" * 50)
     
-    # Создаём новый форматтер прямо здесь - не меняем OrderCalculator
+    
     class NewFormatFormatter(ReportFormatter):
         def format(self, orders: List[Order], total: float) -> str:
             return f"=== REPORT ===\nOrders: {len(orders)}\nTotal sum: ${total:.2f}\n=============="
